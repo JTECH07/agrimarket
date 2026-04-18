@@ -1,0 +1,101 @@
+### FICHIER DE TEST API
+# Vous pouvez utiliser ce fichier directement dans VS Code si vous installez
+# l'extension "REST Client" (de Huachao Mao) ou l'importer dans Postman.
+
+@baseUrl = http://127.0.0.1:8000/api/v1
+# Remplacez ce token par celui que vous obtiendrez lors du login
+@token = votre_token_ici
+
+###
+# 1. CATALOGUE PUBLIC (Aucun token requis)
+###
+
+# Lister les catégories
+GET {{baseUrl}}/categories
+Accept: application/json
+
+###
+
+# Lister tous les plats (Marketplace)
+GET {{baseUrl}}/menu-items
+Accept: application/json
+
+###
+
+# Lister tous les produits des fermes
+GET {{baseUrl}}/products
+Accept: application/json
+
+
+###
+# 2. AUTHENTIFICATION & UTILISATEURS
+###
+
+# Se connecter en tant que Producteur (Défini dans le Seeder)
+POST {{baseUrl}}/login
+Accept: application/json
+Content-Type: application/json
+
+{
+    "email": "producer@test.com",
+    "password": "password123"
+}
+
+###
+
+# Obtenir le profil de l'utilisateur connecté (Nécessite le Token)
+# Mettez à jour la variable @token en haut du fichier avec la réponse du login
+GET {{baseUrl}}/profile
+Accept: application/json
+Authorization: Bearer {{token}}
+
+
+###
+# 3. ESPACE VENDEUR (Nécessite un Token de Producteur valide)
+###
+
+# Lister uniquement les propres produits du producteur connecté
+GET {{baseUrl}}/me/products
+Accept: application/json
+Authorization: Bearer {{token}}
+
+###
+
+# Créer un nouveau produit en tant que producteur
+POST {{baseUrl}}/products
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "category_id": 1,
+    "name": "Tomates Bio Premium",
+    "description": "Excellentes tomates cultivées sans pesticides.",
+    "price": 2500,
+    "unit": "kg",
+    "stock_quantity": 50,
+    "min_order_quantity": 2,
+    "is_organic": true
+}
+
+###
+# 4. PANIER ET COMMANDES (Nécessite un Token valide)
+###
+
+# Transformer un panier en commandes multi-vendeurs + Paiement FedaPay
+POST {{baseUrl}}/checkout
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "delivery_address_id": 1,
+    "payment_method": "mobile_money",
+    "items": [
+        {
+            "type": "product",
+            "id": 1,
+            "quantity": 2
+        }
+    ]
+}
