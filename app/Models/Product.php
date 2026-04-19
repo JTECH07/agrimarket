@@ -16,6 +16,7 @@ class Product extends Model
         'category_id',
         'name',
         'slug',
+        'image',
         'description',
         'price',
         'discount_price',
@@ -88,5 +89,14 @@ class Product extends Model
     public function scopeOrganic($query)
     {
         return $query->where('is_organic', true);
+    }
+
+    protected static function booted()
+    {
+        static::creating(function ($product) {
+            if (empty($product->slug)) {
+                $product->slug = \Illuminate\Support\Str::slug($product->name) . '-' . uniqid();
+            }
+        });
     }
 }

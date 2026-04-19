@@ -39,4 +39,13 @@ class MenuItem extends Model
     {
         return $this->hasMany(OrderItem::class);
     }
+
+    protected static function booted()
+    {
+        static::creating(function ($item) {
+            if (empty($item->slug)) {
+                $item->slug = \Illuminate\Support\Str::slug($item->name) . '-' . uniqid();
+            }
+        });
+    }
 }

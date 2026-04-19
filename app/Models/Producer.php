@@ -12,6 +12,7 @@ class Producer extends Model
     protected $fillable = [
         'user_id',
         'farm_name',
+        'location',
         'description',
         'logo',
         'registration_number',

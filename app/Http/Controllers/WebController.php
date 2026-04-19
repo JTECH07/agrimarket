@@ -58,4 +58,18 @@ class WebController extends Controller
 
         return view('catalog', compact('items', 'type'));
     }
+    public function show($type, $id)
+    {
+        if ($type === 'product') {
+            $item = Product::withoutGlobalScope(ProducerScope::class)
+                ->with(['producer', 'category'])
+                ->findOrFail($id);
+        } else {
+            $item = MenuItem::withoutGlobalScope(RestaurantScope::class)
+                ->with(['menu.restaurant', 'category'])
+                ->findOrFail($id);
+        }
+
+        return view('product.show', compact('item', 'type'));
+    }
 }
