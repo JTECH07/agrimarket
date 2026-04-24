@@ -33,7 +33,7 @@
                                 <i data-lucide="upload-cloud" class="w-8 h-8 text-gray-400 mb-2"></i>
                                 <p class="text-[10px] text-gray-400 font-black uppercase">Changer la photo</p>
                             </div>
-                            <input type="file" name="image_file" class="hidden" accept="image/*" />
+                            <input type="file" name="image" class="hidden" accept="image/*" />
                         </label>
                     </div>
                 </div>

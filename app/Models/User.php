@@ -39,6 +39,15 @@ class User extends Authenticatable
         ];
     }
 
+    /**
+     * Role Helpers
+     */
+    public function isProducer() { return $this->user_type === 'producer'; }
+    public function isRestaurant() { return $this->user_type === 'restaurant'; }
+    public function isCustomer() { return $this->user_type === 'customer'; }
+    public function isDeliveryAgent() { return $this->user_type === 'delivery_agent'; }
+    public function isAdmin() { return $this->user_type === 'admin'; }
+
     public function producer()
     {
         return $this->hasOne(Producer::class);

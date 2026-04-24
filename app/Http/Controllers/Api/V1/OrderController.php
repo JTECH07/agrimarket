@@ -9,6 +9,7 @@ use App\Models\OrderItem;
 use App\Models\Payment;
 use App\Models\Product;
 use App\Models\MenuItem;
+use App\Models\Address;
 use Illuminate\Support\Facades\DB;
 use FedaPay\FedaPay;
 use FedaPay\Transaction;
@@ -22,9 +23,21 @@ class OrderController extends Controller
             'items.*.type' => 'required|in:product,menu_item',
             'items.*.id' => 'required|integer',
             'items.*.quantity' => 'required|integer|min:1',
-            'delivery_address_id' => 'required|exists:addresses,id',
+            'delivery_address_id' => 'nullable|integer|exists:addresses,id',
+            'delivery_address' => 'nullable|array',
+            'delivery_address.title' => 'nullable|string|max:255',
+            'delivery_address.address_line' => 'nullable|string|max:255',
+            'delivery_address.city' => 'nullable|string|max:255',
+            'delivery_address.additional_info' => 'nullable|string|max:255',
             'payment_method' => 'required|in:mobile_money,card,cash_on_delivery',
         ]);
+
+        $deliveryAddressId = $this->resolveDeliveryAddressId($validated);
+        if (!$deliveryAddressId) {
+            return response()->json([
+                'message' => 'Adresse de livraison invalide. Merci de renseigner une adresse complète (ville + adresse).',
+            ], 422);
+        }
 
         $groupedItems = [];
         $totalAmount = 0;
@@ -91,7 +104,7 @@ class OrderController extends Controller
                     'status' => 'pending',
                     'payment_status' => 'pending',
                     'payment_method' => $request->payment_method,
-                    'delivery_address_id' => $request->delivery_address_id,
+                    'delivery_address_id' => $deliveryAddressId,
                 ]);
 
                 foreach ($items as $item) {
@@ -126,7 +139,7 @@ class OrderController extends Controller
                         "firstname" => auth()->user()->name,
                         "email" => auth()->user()->email,
                         "phone_number" => [
-                            "number" => auth()->user()->phone,
+                            "number" => auth()->user()->phone ?? '00000000',
                             "country" => "bj" // Bénin par défaut
                         ]
                     ]
@@ -165,6 +178,39 @@ class OrderController extends Controller
             DB::rollBack();
             return response()->json(['message' => 'Erreur lors du checkout', 'error' => $e->getMessage()], 500);
         }
+    }
+
+    private function resolveDeliveryAddressId(array $validated): ?int
+    {
+        $user = auth()->user();
+
+        if (!$user) {
+            return null;
+        }
+
+        if (!empty($validated['delivery_address_id'])) {
+            $address = Address::where('id', $validated['delivery_address_id'])
+                ->where('user_id', $user->id)
+                ->first();
+
+            return $address?->id;
+        }
+
+        $payload = $validated['delivery_address'] ?? [];
+        if (!empty($payload['address_line']) && !empty($payload['city'])) {
+            $address = Address::create([
+                'user_id' => $user->id,
+                'title' => $payload['title'] ?? 'Livraison',
+                'address_line' => $payload['address_line'],
+                'city' => $payload['city'],
+                'additional_info' => $payload['additional_info'] ?? null,
+                'is_default' => $user->addresses()->count() === 0,
+            ]);
+
+            return $address->id;
+        }
+
+        return $user->addresses()->value('id');
     }
 
     public function fedapayWebhook(Request $request) 

@@ -20,6 +20,12 @@ class CategorySeeder extends Seeder
             'Céréales et Grains',
             'Plats Préparés',
             'Boissons locales',
+            'Produits de la mer',
+            'Produits transformés',
+            'Épices et Condiments',
+            'Huiles et Vinaigres',
+            'Miels et Sirops',
+            'Produits de la ruche',
         ];
 
         foreach ($categories as $category) {

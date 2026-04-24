@@ -80,6 +80,16 @@ class Order extends Model
         return $query->whereIn('status', ['confirmed', 'preparing', 'ready', 'in_delivery']);
     }
 
+    public function scopeForSeller($query, $sellerId)
+    {
+        return $query->where('seller_id', $sellerId);
+    }
+
+    public function scopeForCustomer($query, $customerId)
+    {
+        return $query->where('customer_id', $customerId);
+    }
+
     // Helper methods
     public function markAsConfirmed()
     {

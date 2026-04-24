@@ -27,7 +27,7 @@
                                 <i data-lucide="image" class="w-8 h-8 text-gray-400 mb-2"></i>
                                 <p class="text-xs text-gray-500 font-bold">Cliquez pour ajouter une photo (JPG, PNG)</p>
                             </div>
-                            <input type="file" name="image_file" class="hidden" accept="image/*" />
+                            <input type="file" name="image" class="hidden" accept="image/*" />
                         </label>
                     </div>
                 </div>

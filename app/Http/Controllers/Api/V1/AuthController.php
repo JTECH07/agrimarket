@@ -52,10 +52,21 @@ class AuthController extends Controller
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
+        $relation = match ($user->user_type) {
+            'producer' => 'producer',
+            'restaurant' => 'restaurant',
+            'delivery_agent' => 'deliveryAgent',
+            default => null,
+        };
+
+        if ($relation) {
+            $user->load($relation);
+        }
+
         return response()->json([
             'access_token' => $token,
             'token_type' => 'Bearer',
-            'user' => $user->load($user->user_type) // Charge la relation s'il y a lieu
+            'user' => $user
         ], 201);
     }
 

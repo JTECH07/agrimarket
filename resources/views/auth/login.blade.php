@@ -14,6 +14,12 @@
                 Connectez-vous pour gérer vos commandes ou votre boutique.
             </p>
         </div>
+
+        @if(session('success'))
+            <div class="bg-green-50 border border-green-200 text-green-700 text-sm rounded-xl p-3">
+                {{ session('success') }}
+            </div>
+        @endif
         
         <form class="mt-8 space-y-6" action="{{ route('login') }}" method="POST">
             @csrf
@@ -41,7 +47,7 @@
                 </div>
 
                 <div class="text-sm">
-                    <a href="#" class="font-medium text-brand-600 hover:text-brand-500 transition-colors"> Mot de passe oublié ? </a>
+                    <a href="{{ route('password.request') }}" class="font-medium text-brand-600 hover:text-brand-500 transition-colors"> Mot de passe oublié ? </a>
                 </div>
             </div>
 

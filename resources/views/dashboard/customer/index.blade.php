@@ -56,9 +56,9 @@
                                 </div>
                             @endif
                         </div>
-                        <button class="bg-gray-50 hover:bg-brand-50 text-gray-600 hover:text-brand-600 px-6 py-2.5 rounded-xl font-bold text-sm transition-all flex items-center gap-2 border border-gray-100">
+                        <a href="{{ route('dashboard.orders.show', $order->id) }}" class="bg-gray-50 hover:bg-brand-50 text-gray-600 hover:text-brand-600 px-6 py-2.5 rounded-xl font-bold text-sm transition-all flex items-center gap-2 border border-gray-100">
                             Détails <i data-lucide="chevron-right" class="w-4 h-4"></i>
-                        </button>
+                        </a>
                     </div>
                 </div>
             @endforeach

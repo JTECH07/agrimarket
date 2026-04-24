@@ -12,7 +12,7 @@
             </div>
             <div>
                 <p class="text-[10px] font-black uppercase text-gray-400">À récupérer</p>
-                <p class="text-xl font-black text-gray-900">{{ $deliveries->where('status', 'pending')->count() }}</p>
+                <p class="text-xl font-black text-gray-900">{{ $deliveries->whereIn('status', ['pending', 'assigned'])->count() }}</p>
             </div>
         </div>
         <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex items-center gap-4">
@@ -21,7 +21,7 @@
             </div>
             <div>
                 <p class="text-[10px] font-black uppercase text-gray-400">En transit</p>
-                <p class="text-xl font-black text-gray-900">{{ $deliveries->where('status', 'picked_up')->count() }}</p>
+                <p class="text-xl font-black text-gray-900">{{ $deliveries->whereIn('status', ['picked_up', 'in_transit'])->count() }}</p>
             </div>
         </div>
     </div>
@@ -44,20 +44,26 @@
                         </div>
                         <div>
                             <p class="text-sm font-black text-gray-900">{{ $delivery->order->deliveryAddress->city ?? 'Quartier non défini' }}</p>
-                            <p class="text-xs text-gray-500 font-medium">{{ $delivery->order->deliveryAddress->address_line1 ?? 'Adresse de livraison' }}</p>
+                            <p class="text-xs text-gray-500 font-medium">{{ $delivery->order->deliveryAddress->address_line ?? 'Adresse de livraison' }}</p>
                         </div>
                     </div>
 
                     <div class="bg-gray-50 px-6 py-4 rounded-2xl border border-gray-100 text-center w-full md:w-auto">
                         <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Détails Colis</p>
-                        <p class="text-sm font-bold text-gray-900">Commande #{{ $delivery->order->order_number }}</p>
+                        <p class="text-sm font-bold text-gray-900">Commande #{{ $delivery->order->order_number ?? $delivery->order->id }}</p>
                     </div>
 
                     <div class="flex items-center gap-3 w-full md:w-auto">
-                        @if($delivery->status === 'pending')
-                            <button class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-bold text-sm shadow-lg shadow-blue-500/20 transition">Enlever le colis</button>
+                        @if(in_array($delivery->status, ['pending', 'assigned']))
+                            <form action="{{ route('dashboard.deliveries.pickup', $delivery->id) }}" method="POST" class="w-full md:w-auto">
+                                @csrf
+                                <button type="submit" class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-bold text-sm shadow-lg shadow-blue-500/20 transition">Enlever le colis</button>
+                            </form>
                         @elseif($delivery->status === 'picked_up')
-                            <button class="w-full md:w-auto bg-brand-600 hover:bg-brand-700 text-white px-6 py-3 rounded-xl font-bold text-sm shadow-lg shadow-brand-500/20 transition">Confirmer Livraison</button>
+                            <form action="{{ route('dashboard.deliveries.complete', $delivery->id) }}" method="POST" class="w-full md:w-auto">
+                                @csrf
+                                <button type="submit" class="w-full md:w-auto bg-brand-600 hover:bg-brand-700 text-white px-6 py-3 rounded-xl font-bold text-sm shadow-lg shadow-brand-500/20 transition">Confirmer Livraison</button>
+                            </form>
                         @else
                             <span class="px-4 py-2 bg-green-50 text-green-600 rounded-xl text-xs font-black uppercase tracking-wider">Livraison Terminée</span>
                         @endif

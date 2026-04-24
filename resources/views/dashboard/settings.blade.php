@@ -21,6 +21,16 @@
              @method('PATCH')
             <div class="space-y-8">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <label class="block text-xs font-black text-gray-400 uppercase tracking-[0.2em] mb-3">Votre nom</label>
+                        <input type="text" name="name" required value="{{ old('name', $user->name) }}"
+                            class="w-full bg-gray-50 border border-gray-100 rounded-2xl px-6 py-4 outline-none focus:ring-2 focus:ring-brand-500 transition-all font-bold text-gray-900 shadow-inner">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-black text-gray-400 uppercase tracking-[0.2em] mb-3">Téléphone</label>
+                        <input type="text" name="phone" value="{{ old('phone', $user->phone) }}"
+                            class="w-full bg-gray-50 border border-gray-100 rounded-2xl px-6 py-4 outline-none focus:ring-2 focus:ring-brand-500 transition-all font-bold text-gray-900 shadow-inner">
+                    </div>
                     <div class="md:col-span-2">
                         <label class="block text-xs font-black text-gray-400 uppercase tracking-[0.2em] mb-3">Nom public (Ferme ou Restaurant)</label>
                         <input type="text" name="name_or_farm" required 
